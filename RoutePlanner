@@ -1,0 +1,3 @@
+curl -i -H "Accept: application/json" "https://maps.googleapis.com/maps/api/distancematrix/json?origins=1+Calvert+Drive+Monsey+NY&destinations=1+Linderman+Lane+Monsey+NY&key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4"
+"https://maps.googleapis.com/maps/api/distancematrix/json?origins="+ location + "&destinations=" + destinations + " &key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4"
+
