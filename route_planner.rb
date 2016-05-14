@@ -60,6 +60,6 @@ def run(locations)
 end
 
 locations = ["11 Broadway New York NY", "1 Linderman Ln Monsey NY", "13 Ralph Monsey NY", "Park Slope NY"]
-puts run(locations)
+run(locations)
 
 
