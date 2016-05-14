@@ -3,22 +3,20 @@ require 'pry'
 
 HTTParty::Basement.default_options.update(verify: false)
 
-# "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + origin + "&destinations=" + destinations + "|" + destinations + " &key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4"
-
-# curl -i -H "Accept: application/json" "https://maps.googleapis.com/maps/api/distancematrix/json?origins=1+Calvert+Drive+Monsey+NY|11+Broadway+NY+NY&destinations=1+Linderman+Lane+Monsey+NY|13+Ralph+Blvd+Monsey+NY&key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4"
-
-# origin | origin => destination | destination
 
 # get all permutations
 # add them up for each route
-def permutation(locations)
-  locations.permutation.to_a.each_with_object([]) do |perm, all_times| 
-    all_times << get_route(perm)
-  end
+
+def permutations(locations)
+  locations.permutation.to_a
+end
+
+def get_route(all_permutations)
+  all_permutations.collect { |locations|  route_from_maps_api(locations) }
 end
 
 
-def get_route(locations)
+def route_from_maps_api(locations)
   origin = "59 Route 59 Monsey NY 10952"
   origin_count = 0
   i = 0
@@ -39,19 +37,29 @@ end
 
 
 def parse_time(all_times)
-  all_times.each do |route|
-    route.each do |time|
-      binding.pry
+  all_times.collect do |route|
+    route.collect { |time| hours_to_mins(time) }
   end
 end
 
-
-def run(locations)
-  all_times = permutation(locations)
-  parse_time(all_times)
+def hours_to_mins(time)
+  split_time = time.split(" ")
+  split_time.length == 4 ? split_time.first.to_i * 60 + split_time[2].to_i : split_time[2].to_i
 end
 
-locations = ["11 Broadway New York NY", "Park Slope NY", "1 Linderman Ln Monsey NY"]
-run(locations)
+def get_fastest_route(minutes_in_route)
+  minutes_in_route.collect { |minutes| minutes.reduce(:+) }.each_with_index.min
+end
+
+def run(locations)
+  all_permutations = permutations(locations)
+  all_times = get_route(all_permutations)
+  minutes_in_route = parse_time(all_times)
+  fastest_route = get_fastest_route(minutes_in_route)
+  all_permutations[fastest_route.last]
+end
+
+locations = ["11 Broadway New York NY", "1 Linderman Ln Monsey NY", "13 Ralph Monsey NY", "Park Slope NY"]
+puts run(locations)
 
 
