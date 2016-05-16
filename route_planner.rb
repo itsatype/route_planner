@@ -17,21 +17,15 @@ end
 
 
 def route_from_maps_api(locations, origin)
-  origin_count = 0
-  i = 0
-  time = Array.new
-  while i < locations.length-1  do
-    if origin_count == 0
-      response = HTTParty.get("https://maps.googleapis.com/maps/api/distancematrix/json?origins=#{origin}&destinations=#{locations[i]}&key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4")
+  locations.each_with_object([]).with_index do |(location, time), index|
+    if index == 0
+      response = HTTParty.get("https://maps.googleapis.com/maps/api/distancematrix/json?origins=#{origin}&destinations=#{location}&key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4")
       time << response["rows"].first["elements"].first["duration"]["text"]
-      origin_count +=1
     else
-      response = HTTParty.get("https://maps.googleapis.com/maps/api/distancematrix/json?origins=#{locations[i]}&destinations=#{locations[i+1]}&key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4")
+      response = HTTParty.get("https://maps.googleapis.com/maps/api/distancematrix/json?origins=#{locations[index-1]}&destinations=#{location}&key=AIzaSyCEgY30ofql0NkPFP8wPK8VfHqmSqOnQY4")
       time << response["rows"].first["elements"].first["duration"]["text"]
-      i +=1
     end
   end
-  time
 end
 
 
@@ -58,7 +52,8 @@ def run(locations)
   all_permutations[fastest_route.last]
 end
 
-locations = ["5 Calvert Dr Monsey NY", "11 Broadway New York NY", "1 Linderman Ln Monsey NY", "20 Robert Pitt Monsey NY"]
+locations = ["5 Calvert Dr Monsey NY", "1 Linderman Ln Monsey NY", "20 Robert Pitt Monsey NY"]
+
 puts run(locations)
 
 
